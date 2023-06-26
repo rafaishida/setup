@@ -58,7 +58,7 @@ jobs:
             core.setOutput('json_var',payload)
             core.setCommandEcho(false)
   create-github-repo:
-    uses: rafaishida/reusable-workflows/.github/workflows/create-repo.yml@v3
+    uses: rafaishida/reusable-workflows/.github/workflows/create-repo.yml@v4
     needs: 
       - form-to-json
     with: 
