@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v2
+
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -26,8 +27,8 @@ jobs:
           reactions: '+1'
       - name: Teste
         run: |  
-          echo ${{ secrets.APPLICATION_ID}}
-          echo ${{ secrets.APP_PRIVATE_KEY}}
+          echo ${{APPLICATION_ID}}
+          echo ${{ APP_PRIVATE_KEY}}
         
   form-to-json:
     name: Convert Form Issue to JSON
@@ -36,12 +37,7 @@ jobs:
     outputs:
       payload-parsed: ${{ steps.payload.outputs.json_var }}
     steps:
-      - name: Get Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v2
-        with: 
-          application_id: ${{ secrets.APPLICATION_ID}}
-          application_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      
           
       - name: Run Issue form parser
         id: parse
@@ -56,7 +52,7 @@ jobs:
         id: payload
         uses: actions/github-script@v6
         with: 
-          github-token: ${{ steps.get_worflow_token.outputs.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const payload = ${{ steps.parse.outputs.payload }}
             const template = payload.Template.split('\r\r')[0]
@@ -84,18 +80,13 @@ jobs:
       repo_name: ${{ needs.create-github-repo.outputs.repo_name }}
       #contas: ${{ needs.create-github-repo.outputs.repo_name }}
     steps:
-      - name: Get Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v1
-        with:
-          application_id: ${{ secrets.APPLICATION_ID }}
-          application_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Checkout Modulo
         uses: actions/checkout@v3
         with: 
           repository: rafaishida/lambda-template
           ref: 'refs/heads/main'
-          token: ${{ steps.get_workflow_token.outputs.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Update Repo Files
         run:
@@ -110,7 +101,7 @@ jobs:
           repository: rafaishida/${{ needs.create-github-repo.outputs.repo_name }}
           path: ./
           ref: 'refs/heads/main'
-          token: ${{ steps.get_workflow_token.outputs.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Commit and Push Template workflow
         run: |
