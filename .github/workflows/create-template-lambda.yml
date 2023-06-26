@@ -21,6 +21,21 @@ jobs:
         run: |
           git config --global user.name 'rafaishida'
           git config --global user.email 'rafael.ishida@yahoo.com.br'
+      - name: Instalar hub
+        run: |
+          VERSION="2.14.2"  # Versão do hub a ser instalada
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')  # Sistema operacional
+          ARCH=$(uname -m)  # Arquitetura
+          
+          # Download do hub
+          curl -sSL "https://github.com/github/hub/releases/download/v${VERSION}/hub-${OS}-${ARCH}-${VERSION}.tgz" -o hub.tgz
+          
+          # Extração e instalação do hub
+          tar xzf hub.tgz
+          sudo ./hub-${VERSION}/install
+          
+          # Verificação da instalação
+          hub version    
       - name: Criar Novo Repositório
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,17 +93,9 @@ jobs:
           #git remote set-url origin https://username:access_token_or_password@gitlab.com/path_to_your_repo/repo.git
           #git push git@github.com:$OWNER/$NEW_REPO
           
-          # Instalar a CLI do GitHub
-          curl -sSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-          apt update
-          apt install -y gh
-
-          # Configurar a CLI do GitHub com o token de acesso pessoal
-          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
 
           # Criar o novo repositório
-          gh repo create $NEW_REPO_NAME --private
+          hub create $OWNER/$NEW_REPO
           echo "11"
           git push --set-upstream origin main
 
