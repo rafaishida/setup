@@ -65,7 +65,7 @@ jobs:
           git branch -M main
           git config --global user.name 'rafaishida'
           #git remote add origin https://github.com/$OWNER/$NEW_REPO
-          git remote add origin git@github.com:$OWNER/$NEW_REPO.git
+          git remote add origin git@github.com:$OWNER/$NEW_REPO
           
           # Empurrar o novo repositório para o repositório remoto
           echo "9"
@@ -78,5 +78,5 @@ jobs:
           #git remote set-url origin https://username:access_token_or_password@gitlab.com/path_to_your_repo/repo.git
           #git push git@github.com:$OWNER/$NEW_REPO
           
-          git push --set-upstream origin master
+          git push --set-upstream origin 
 
