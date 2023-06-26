@@ -7,21 +7,147 @@ on:
 
 jobs:
   add-comment:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Create comment
-      uses: peter-evans/create-or-update-comment@v2
-      with:
-        issue-number: ${{ github.event.issue.number }}
-        body: |
-          Acompanhe através do link https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
-        reactions: '+1'
+    name: Add Comment on Issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Acompanhe através do link https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
+          reactions: '+1'
         
   form-to-json:
     name: Convert Form Issue to JSON
     runs-on: ubuntu-latest
     needs: [add-comment]
     outputs:
-      payload
-  
-  
+      payload-parsed: ${{ steps.payload.outputs.json_var }}
+    steps:
+      - name: Get Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v2
+        with: 
+          application_id: ${{ secrets.APPLICATION_ID}}
+          application_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          
+      - name: Run Issue form parser
+        id: parse
+        uses: peter-murray/issue-forms-body-parser@v3
+        with:
+          issue_id: ${{ github.event.issue.number }}
+          separator: '###'
+          label_marker_start: '>>'
+          label_marker_end: '<<'
+          
+      - name: Set output script
+        id: payload
+        uses: actions/github-script@v6
+        with: 
+          github-token: ${{ steps.get_worflow_token.outputs.token }}
+          script: |
+            const payload = ${{ steps.parse.outputs.payload }}
+            const template = payload.Template.split('\r\r')[0]
+            
+            core.setCommandEcho(true)
+            core.setOuput('jsoo_var',payload)
+            core.setCommandEcho(false)
+  create-github-repo:
+    uses: fazer/repo
+    needs: 
+      - form-to-json
+    with: 
+      payload: ${{ needs.form-to-json.outputs.payload-parsed }}
+    secrets: inherit
+    
+  commit-modules-into-repo:
+    name: Commit Modules into Repo
+    runs-on: ubuntu-latest
+    
+    needs: 
+      - form-to-json
+      - create-github-repo
+    outputs:
+      recurso: ${{ needs.create-github-repo.outputs.repo_name }}
+      repo_name: ${{ needs.create-github-repo.outputs.repo_name }}
+      #contas: ${{ needs.create-github-repo.outputs.repo_name }}
+    steps:
+      - name: Get Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v1
+        with:
+          application_id: ${{ secrets.APPLICATION_ID }}
+          application_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Checkout Modulo
+        uses: actions/checkout@v3
+        with: 
+          repository: rafaishida/lambda-template
+          ref: 'refs/heads/main'
+          token: ${{ steps.get_workflow_token.outputs.token }}
+          
+      - name: Update Repo Files
+        run:
+          mkdir ..infra
+          cp -R ./infra/* ../infra
+          cp -R .README.md ../
+          ls -R ../infra
+          
+      - name: Chechout Repo Criado
+        uses: actions/checkout@v3
+        with: 
+          repository: rafaishida/${{ needs.create-github-repo.outputs.repo_name }}
+          path: ./
+          ref: 'refs/heads/main'
+          token: ${{ steps.get_workflow_token.outputs.token }}
+          
+      - name: Commit and Push Template workflow
+        run: |
+          rm -rf ./infra
+          cp -R ../infra ./
+          cp -r ../README.md ./
+          git checkout -b feature/initial-commit
+          git add .
+          git commit -m 'Commit do modulo'
+          git push --set-upstream origin feature/initial-commit
+         
+         
+          
+  add-error-comment:
+    name: Add Error comment
+    runs-on: ubuntu-latest
+    if: |
+      (needs.create-github-repo.result == 'failure')
+    needs: [create-github-repo]
+    steps: 
+      - name: Create comment
+        uses: peter-evans/create-or-update-comments@v2
+        with:
+          issue-number: ${{ github.event.issue.number}}
+          body: |
+            Erro durante a exeucução.Acesse o link https://github.com/rafaishida/${{needs.create-github-repo.outputs.repo_name}}
+          reactions: '+1'
+          
+  auto-closing-issue:
+    name: Auto-closing Issue
+    runs-on: ubuntu-latest
+    if: |
+      always() &&
+      (needs.create-github-repo.result == 'success')
+    needs: [create-github-repo]
+    steps:
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with: 
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Sucesso na criação do repo.Repo criado https://github.com/rafaishida/${{needs.create-github-repo.outputs.repo_name}}
+          reactions: '+1'
+
+      - name: Close Issue
+        id: parse
+        uses: peter-evans/close-issue@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment: Fechando issue automaticamente
+            
