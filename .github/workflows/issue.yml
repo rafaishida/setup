@@ -3,6 +3,13 @@ name: Criação de repositório automatizado.
 on:
   issues:
     types: [opened, reopened]
+    workflow_dispatch:
+      inputs:
+        template:
+          description: 'Issue Template'
+          required: true
+          # Filtrar pelo nome do template customizado utilizado
+          default: 'Criação de repositório'
     
 
 jobs:
