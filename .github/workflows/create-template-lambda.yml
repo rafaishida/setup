@@ -59,7 +59,7 @@ jobs:
           
           # Remover configuração do repositório remoto existente
           echo "7"
-          git remote remove origin
+          #git remote remove origin
           # Configurar o repositório remoto
           echo "8"
           git branch -M main
