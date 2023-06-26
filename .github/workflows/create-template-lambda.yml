@@ -1,0 +1,80 @@
+name: Criar Novo Repositório a partir de Modelo
+on:
+  issues:
+    types: [opened]
+    # Filtrar por ação do usuário
+    workflow_dispatch:
+      inputs:
+        template:
+          description: 'Issue Template'
+          required: true
+          # Filtrar pelo nome do template customizado utilizado
+          default: 'Criação de repositório'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v2
+
+      - name: Configurar as Credenciais do Git
+        run: |
+          git config --global user.name 'rafaishida'
+          git config --global user.email 'rafael.ishida@yahoo.com.br'
+      - name: Criar Novo Repositório
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Extrair o nome do novo repositório do campo 'nome_aplicacao' da form da issue
+          NEW_REPO_NAME=$(grep -m 1 'id="nome_aplicacao"' $GITHUB_EVENT_PATH | sed -n 's/.*value="\([^"]*\)".*/\1/p')
+          echo "Nome do novo repositório: $NEW_REPO_NAME"
+          echo "Tk: $GITHUB_TOKEN"
+          
+          # Definir variáveis de ambiente
+          echo "1"
+          export OWNER=rafaishida
+          export TEMPLATE_REPO=lambda-template
+          export NEW_REPO=contextu
+          
+          # Clonar o repositório modelo
+          echo "2"
+          git clone --depth 1 https://github.com/$OWNER/$TEMPLATE_REPO.git $NEW_REPO
+          ls
+          
+          # Remover referência ao repositório modelo
+          echo "3"
+          echo $NEW_REPO
+          cd $NEW_REPO
+          rm -rf .git
+          
+          # Inicializar um novo repositório
+          echo "4"
+          git init
+          # Adicionar e confirmar os arquivos do novo repositório
+          echo "5"
+          ls
+          git add .
+          echo "6"
+          git commit -m 'Criar novo repositório a partir do modelo'
+          
+          # Remover configuração do repositório remoto existente
+          echo "7"
+          #git remote remove origin
+          # Configurar o repositório remoto
+          echo "8"
+          git branch -M main
+          git config --global user.name 'rafaishida'
+          #git remote add origin https://github.com/$OWNER/$NEW_REPO
+          git remote add origin git@github.com:$OWNER/$NEW_REPO
+          
+          # Empurrar o novo repositório para o repositório remoto
+          echo "9"
+          git remote -v
+          #git remote set-url origin git@github.com/$OWNER/$NEW_REPO
+          echo $GITHUB_REPOSITOR
+          #git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          echo "10"
+          #git remote set-url origin https://username:access_token_or_password@gitlab.com/path_to_your_repo/repo.git
+          git push https://$GITHUB_TOKEN@github.com/$OWNER/$NEW_REPO.git
+          
+          #git push origin main

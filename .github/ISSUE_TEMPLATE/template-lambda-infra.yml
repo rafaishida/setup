@@ -1,0 +1,66 @@
+name: "Criação de repositório"
+description: Criação de repositório contendo infra e código.
+title: "Criação de repositório"
+labels: ["reopsitorio","cloud","infra"]
+assignees:
+  - ${{github.author}}
+body:
+  - type: markdown
+    attributes:
+      value: Formulário padräo para criação de repositório.
+
+  - type: input
+    id: nome_aplicacao
+    attributes:
+      label: ">>Nome da aplicação<<"
+      description: Nome da aplicação
+      placeholder: nomeaplicacao
+    validations:
+      required: true
+
+  - type: input
+    id: descricao
+    attributes:
+      label: ">>Descrição da aplicação<<"
+      description: Descrição da aplicação
+      placeholder: descriçãodaaplicacao
+    validations:
+      required: true    
+
+  - type: input
+    id: nome_squad
+    attributes:
+      label: ">>Squad responsável<<"
+      description: Squad responsável
+      placeholder: nomesdaminhaquad
+    validations:
+      required: true
+
+  - type: input
+    id: email_squad
+    attributes:
+      label: ">>Email da squad responsável<<"
+      description: Email da squad responsável
+      placeholder: emaildaminhasquad
+    validations:
+      required: true
+
+      
+  - type: dropdown
+    id: template
+    attributes:
+      label: ">>Template<<"
+      description: Este repositório é para qual recurso?
+      options:
+        - template-python-lambda
+    validations:
+      required: true 
+
+  - type: input
+    id: conta_aws
+    attributes:
+      label: ">>Nome da conta AWS<<"
+      description: Nome da conta AWS
+      placeholder: nomedaminhaconta
+    validations:
+      required: true     
