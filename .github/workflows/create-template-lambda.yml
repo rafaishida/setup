@@ -59,7 +59,7 @@ jobs:
           
           # Remover configuração do repositório remoto existente
           echo "7"
-          #git remote remove origin
+          git remote remove origin
           # Configurar o repositório remoto
           echo "8"
           git branch -M main
@@ -75,6 +75,6 @@ jobs:
           #git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           echo "10"
           #git remote set-url origin https://username:access_token_or_password@gitlab.com/path_to_your_repo/repo.git
-          git push git@github.com:$OWNER/$NEW_REPO
+          #git push git@github.com:$OWNER/$NEW_REPO
           
           #git push --set-upstream origin main
