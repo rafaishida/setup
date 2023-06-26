@@ -79,7 +79,7 @@ jobs:
           #git push git@github.com:$OWNER/$NEW_REPO
           
           # Fazer a solicitação para criar o novo repositório
-          response=$(curl -u "rafaishida:$GITHUB_TOKEN" -X POST -H "Accept: application/vnd.github.v3+json" \
+          response=$(curl -u "rafaishida:${{ secrets.GITHUB_TOKEN }}" -X POST -H "Accept: application/vnd.github.v3+json" \
           "https://api.github.com/user/repos" -d "{\"name\":\"$NEW_REPO_NAME\",\"private\":true}")
 
           # Verificar o código de resposta da API
