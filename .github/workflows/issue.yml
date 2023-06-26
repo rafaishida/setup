@@ -58,7 +58,7 @@ jobs:
             const template = payload.Template.split('\r\r')[0]
             
             core.setCommandEcho(true)
-            core.setOuput('jsoo_var',payload)
+            core.setOuput('json_var',payload)
             core.setCommandEcho(false)
   create-github-repo:
     uses: rafaishida/reusable-workflows/.github/workflows/create-repo.yml@v2
