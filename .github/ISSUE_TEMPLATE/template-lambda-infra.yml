@@ -10,7 +10,7 @@ body:
       value: Formulário padräo para criação de repositório.
 
   - type: input
-    id: nome_aplicacao
+    id: name
     attributes:
       label: ">>Nome da aplicação<<"
       description: Nome da aplicação
