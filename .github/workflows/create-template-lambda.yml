@@ -71,7 +71,7 @@ jobs:
           echo "9"
           git remote -v
           #git remote set-url origin git@github.com/$OWNER/$NEW_REPO
-          echo $GITHUB_REPOSITOR
+          echo $GITHUB_REPOSITORY
           #git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           echo "10"
           #git remote set-url origin https://username:access_token_or_password@gitlab.com/path_to_your_repo/repo.git
