@@ -61,7 +61,7 @@ jobs:
             core.setOuput('jsoo_var',payload)
             core.setCommandEcho(false)
   create-github-repo:
-    uses: fazer/repo
+    uses: rafaishida/reusable-workflows/.github/workflows/create-repo.yml@v1
     needs: 
       - form-to-json
     with: 
