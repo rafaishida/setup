@@ -24,6 +24,12 @@ jobs:
           body: |
             Acompanhe através do link https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
           reactions: '+1'
+      - name: Teste
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |  
+          echo ${{ secrets.APPLICATION_ID}}
+          echo ${{ secrets.APP_PRIVATE_KEY}
         
   form-to-json:
     name: Convert Form Issue to JSON
