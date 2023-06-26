@@ -78,4 +78,4 @@ jobs:
           #git remote set-url origin https://username:access_token_or_password@gitlab.com/path_to_your_repo/repo.git
           #git push git@github.com:$OWNER/$NEW_REPO
           
-          git push -u origin main
+          git push origin 
