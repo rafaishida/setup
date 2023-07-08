@@ -85,20 +85,7 @@ jobs:
           ref: 'refs/heads/main'
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Update Repo Files
-        run:
-          mkdir ..infra
-          cp -R ./infra/* ../infra
-          cp -R .README.md ../
-          ls -R ../infra
-          
-      - name: Chechout Repo Criado
-        uses: actions/checkout@v3
-        with: 
-          repository: rafaishida/${{ needs.create-github-repo.outputs.repo_name }}
-          path: ./
-          ref: 'refs/heads/main'
-          token: ${{ secrets.GITHUB_TOKEN }}
+
           
       - name: Criar novo repositório vazio
         id: criar-repo
