@@ -100,16 +100,15 @@ jobs:
           ref: 'refs/heads/main'
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Commit and Push Template workflow
-        run: |
-          rm -rf ./infra
-          cp -R ../infra ./
-          cp -r ../README.md ./
-          git checkout -b feature/initial-commit
-          git add .
-          git commit -m 'Commit do modulo'
-          git push --set-upstream origin feature/initial-commit
-         
+      - name: Criar novo repositório vazio
+        uses: actions/create-repository@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: rafaishida/${{ needs.create-github-repo.outputs.repo_name }}
+             
+          
+
+    
          
           
   add-error-comment:
