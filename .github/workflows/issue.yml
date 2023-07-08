@@ -101,10 +101,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Criar novo repositório vazio
-        uses: actions/create-repository@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: rafaishida/${{ needs.create-github-repo.outputs.repo_name }}
+        id: criar-repo
+        run: |
+          TOKEN=${{ secrets.GITHUB_TOKEN }}
+          OWNER=${{ github.repository_owner }}
+          REPO_NAME=${{ needs.create-github-repo.outputs.repo_name }}
+
+          response=$(curl -X POST -s -H "Authorization: Bearer $TOKEN" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -d '{"name":"'"$REPO_NAME"'"}' \
+          "https://api.github.com/user/repos")
+          repo_url=$(echo "$response" | jq -r '.html_url')
+        
+          echo "Repositório criado: $repo_url"
              
           
 
